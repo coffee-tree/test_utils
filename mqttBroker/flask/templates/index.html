@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Device Status Control</title>
+        <style>
+            .button-container {
+                text-align: center;
+                margin-top: 50px;
+            }
+
+            .status-button {
+                padding: 10px 20px;
+                font-size: 16px;
+                margin: 10px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="button-container">
+            <button
+                id="3DF92-192"
+                class="status-button"
+                onclick="toggleStatus(this.id)"
+            >
+                3DF92-192: Active
+            </button>
+            <button
+                id="4HH52-394"
+                class="status-button"
+                onclick="toggleStatus(this.id)"
+            >
+                4HH52-394: Active
+            </button>
+        </div>
+
+        <script>
+            function toggleStatus(deviceId) {
+                // 현재 버튼 상태 확인
+                var button = document.getElementById(deviceId);
+                var currentStatus = button.innerHTML.split(": ")[1].trim();
+
+                // 상태 토글
+                var newStatus =
+                    currentStatus === "Active" ? "Inactive" : "Active";
+
+                // POST 요청으로 상태 업데이트
+                fetch(`/status/${deviceId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ status: newStatus }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Success:", data);
+                        // 버튼 상태 업데이트
+                        button.innerHTML = `${deviceId}: ${newStatus}`;
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            }
+        </script>
+    </body>
+</html>
